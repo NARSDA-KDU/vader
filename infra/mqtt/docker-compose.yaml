@@ -1,8 +1,8 @@
 version: "3.7"
 services:
-  mqtt5:
+  mqtt:
     image: eclipse-mosquitto
-    container_name: mqtt5
+    container_name: mqtt
     ports:
       - "1883:1883" #default mqtt port
       - "9001:9001" #default mqtt port for websockets
@@ -34,18 +34,30 @@ services:
         - monitoring 
 
   vader-exporter:
-        # image: vader-exporter
-        build:
-          context: .
-          dockerfile: ../../exporter/Dockerfile
-        container_name: vader-exporter
+        image: ttl.sh/vader-temp:1h
+        # build:
+        #   context: ../../exporter
+        #   dockerfile: ../../exporter/Dockerfile
+        # container_name: vader-exporter
         expose:
-          - 9817
+          - 9093
         ports:
-          - 9817:9817 
+          - 9093:9093
+        environment:
+          - MQTTT_SERVER="mqtt:18003"
         networks:
           - monitoring
           - mqtt
+  mock-publisher:
+    image: ttl.sh/mock-temp:1h
+    # build:
+    #    context: ../../exporter/Testing  # Adjusted path to match the location of the Dockerfile
+    #    dockerfile: ../../exporter/Testing/Dockerfile
+    container_name: mock-publisher
+    networks:
+      - mqtt
+    depends_on:
+      - mqtt
   grafana:
       image: grafana/grafana
       ports:
@@ -61,7 +73,9 @@ volumes:
   config:
   data:
   log:
+  prometheus_data: {}
+  grafana-data:
 
 networks:
-  mqtt5:
+  mqtt:
   monitoring:

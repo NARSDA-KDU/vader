@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 2s
+
+scrape_configs:
+  - job_name: "sensor stats"
+    scrape_interval: 60s
+    scrape_timeout: 60s 
+    static_configs:
+      - targets: ["vader-exporter:9093"]
