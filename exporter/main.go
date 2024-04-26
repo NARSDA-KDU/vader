@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -36,6 +37,8 @@ var (
 			Help: "Number of CO2 values received",
 		},
 	)
+
+	mqttServer = os.Getenv("MQTT_SERVER")
 )
 
 func main() {
@@ -56,7 +59,7 @@ func main() {
 	defer c.Terminate()
 	err := c.Connect(&client.ConnectOptions{
 		Network:  "tcp",
-		Address:  "localhost:1883",
+		Address:  mqttServer,
 		ClientID: []byte("vader.exporter"),
 	})
 	if err != nil {
@@ -90,5 +93,5 @@ func main() {
 	// Start HTTP server to expose Prometheus metrics
 	slog.Info("starting exporter")
 	http.Handle("/metrics", promhttp.Handler())
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":9093", nil))
 }
