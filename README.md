@@ -61,6 +61,11 @@ For visualizing the data we chose [Grafana](https://grafana.com/) as it allows u
 
 
 
+## Todos
+
+- [ ] integrate prometheus blackbox exporter 
+
+
 
 
 
