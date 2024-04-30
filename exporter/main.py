@@ -9,7 +9,7 @@ import time
 from paho.mqtt import client as mqtt_client
 
 
-broker = 'mqtt'
+broker = 'mqtt-svc'
 port = 1883
 topic = "sensors/co2"
 # Generate a Client ID with the subscribe prefix.

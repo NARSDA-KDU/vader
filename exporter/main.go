@@ -7,10 +7,9 @@ import (
 	"os"
 	"strconv"
 
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/yosssi/gmq/mqtt"
-	"github.com/yosssi/gmq/mqtt/client"
 	"golang.org/x/exp/slog"
 )
 
@@ -45,49 +44,34 @@ func main() {
 	prometheus.MustRegister(co2Level, co2Histogram, co2ValueCounter)
 
 	// MQTT connection configuration
-	// Connect to the MQTT Server.
-	// Create an MQTT Client.
-	c := client.New(&client.Options{
-		// Define the processing of the error handler.
-		ErrorHandler: func(err error) {
-			fmt.Println(err)
-		},
-	})
+	var broker = "mqtt-svc"
+	var port = 1883
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(fmt.Sprintf("tcp://%s:%d", broker, port))
 
-	// Terminate the Client.
+	client := mqtt.NewClient(opts)
 
-	defer c.Terminate()
-	err := c.Connect(&client.ConnectOptions{
-		Network:  "tcp",
-		Address:  mqttServer,
-		ClientID: []byte("vader.exporter"),
-	})
-	if err != nil {
-		panic(err)
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		panic(token.Error())
 	}
-	defer c.Disconnect()
+	defer client.Disconnect(250) // Disconnect gracefully after 250 milliseconds
 
 	// Subscribe to the MQTT topic
 	topic := "sensors/co2"
-	err = c.Subscribe(&client.SubscribeOptions{SubReqs: []*client.SubReq{
-		&client.SubReq{
-			TopicFilter: []byte(topic),
-			QoS:         mqtt.QoS0,
-			Handler: func(topicName, message []byte) {
-				// Assuming the message contains CO2 level value
-				co2Value := string(message)
-				slog.Info("Received CO2 level: " + co2Value)
+	token := client.Subscribe(topic, 0, func(client mqtt.Client, msg mqtt.Message) {
+		// Assuming the message contains CO2 level value
+		co2Value := string(msg.Payload())
+		slog.Info("Received CO2 level: " + co2Value)
 
-				co2Val, _ := strconv.Atoi(co2Value)
+		co2Val, _ := strconv.Atoi(co2Value)
 
-				co2Histogram.Observe(float64(co2Val))
-				co2Level.Set(float64(co2Val))
-				co2ValueCounter.Inc()
-			},
-		},
-	}})
-	if err != nil {
-		log.Fatal(err)
+		co2Histogram.Observe(float64(co2Val))
+		co2Level.Set(float64(co2Val))
+		co2ValueCounter.Inc()
+	})
+
+	if token.Wait() && token.Error() != nil {
+		log.Fatal(token.Error())
 	}
 
 	// Start HTTP server to expose Prometheus metrics
