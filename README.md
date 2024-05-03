@@ -20,7 +20,7 @@ MQTT is a lightweight, publish-subscribe, machine to machine network protocol fo
 
 
 ## **Exporter** 
-The exporter takes the mesages it recieves from MQTT and transforms them into various [prometheus metrics](https://prometheus.io/), prometheus suits our current use case as the data we collect is timeseries ,  and we want be ablen to observe the data over time, this is might change in the future but for now this would work. 
+The exporter takes the mesages it recieves from MQTT and transforms them into various [prometheus metrics](https://prometheus.io/), prometheus suits our current use case as the data we collect is timeseries ,  and we want to observe the data over time, this is might change in the future but for now this would work. 
 
 If you'd like to learn more about building exporters here are some recommendations:
 
@@ -38,6 +38,8 @@ We currently collect 3 major metrics using the exporter:
 - co2Histogram:  a historgram of the Co2 levels so we can track it over time 
 - co2ValueCounter:  a counter of how many values we have collected. 
 
+- Avg co2 in the last hour: a neat query which takes the co2 level over the last hour and returns the average.
+
 
 Looking to learn more about prometheus metric types? Take a look at this article:
 https://chronosphere.io/learn/an-introduction-to-the-four-primary-types-of-prometheus-metrics/
@@ -45,20 +47,21 @@ https://chronosphere.io/learn/an-introduction-to-the-four-primary-types-of-prome
 
 ## **Visualization**
 
-For visualizing the data we chose [Grafana](https://grafana.com/) as it allows us to quickly build dashboards based on the data we collect from the exporter. Check back for images. 
+For visualizing the data we chose [Grafana](https://grafana.com/) as it allows us to quickly build dashboards based on the data we collect from the exporter. 
 
-
-## Objectives  
-*check back soon...*
-
+![dashboard](./dashboard/dash.png)
 
 
 ## Tech Stack 
 
+- MQTT for message passing 
+- Prometheus for collecting metrics 
+- Go for our custom exporter 
+- Docker for containerizing workloads.
+
 
 
 ## Running Locally
-
 
 
 ## Todos
