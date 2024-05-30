@@ -13,7 +13,7 @@ At a high level vader consists of three components
 
 
 ## **Vader**
-the main device tht collects atomospheric conditions, it consists of an [esp32](https://www.espressif.com/en/products/socs/esp32) and an [MQ7 gas sensor](https://www.sparkfun.com/datasheets/Sensors/Biometric/MQ-7.pdf) , these monitor co2 levels and publish data over MQTT 
+the main device that collects atomospheric conditions, it consists of an [esp32](https://www.espressif.com/en/products/socs/esp32) and an [MQ7 gas sensor](https://www.sparkfun.com/datasheets/Sensors/Biometric/MQ-7.pdf) , these monitor co2 levels and publish data over MQTT 
 
 ## **MQTT**
 MQTT is a lightweight, publish-subscribe, machine to machine network protocol for message passing, its perfect for our use case becasue it's lightweight and easy to setup. We currently run MQTT as [docker container](https://docs.docker.com/guides/walkthroughs/what-is-a-container/) ,  take a peek at the infra directory for moore information on how to setup. 
