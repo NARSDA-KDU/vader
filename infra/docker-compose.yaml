@@ -52,16 +52,16 @@ services:
           - mqtt
         depends_on:
           - mqtt
-  mock-publisher:
-    # image: ttl.sh/mock-temp:1h
-    build:
-       context: ../exporter  # Adjusted path to match the location of the Dockerfile
-       dockerfile: ../exporter/Dockerfile.test
-    container_name: mock-publisher
-    networks:
-      - mqtt
-    depends_on:
-      - mqtt
+  # mock-publisher:
+  #   # image: ttl.sh/mock-temp:1h
+  #   build:
+  #      context: ../exporter  # Adjusted path to match the location of the Dockerfile
+  #      dockerfile: ../exporter/Dockerfile.test
+  #   container_name: mock-publisher
+  #   networks:
+  #     - mqtt
+  #   depends_on:
+  #     - mqtt
   grafana:
       image: grafana/grafana
       ports:
